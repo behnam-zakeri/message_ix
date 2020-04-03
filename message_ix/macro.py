@@ -183,7 +183,7 @@ class Calculate:
         if not s.has_solution():
             raise RuntimeError('Scenario must have a solution to add MACRO')
 
-        demand = s.var('DEMAND', filters={'level': 'useful'})
+        demand = s.var('DEMAND')
         self.years = set(demand['year'].unique())
 
     def read_data(self):
@@ -310,7 +310,7 @@ class Calculate:
         # read from scenario
         idx = ['node', 'sector', 'year']
         model_price = self._clean_model_data(
-            self.s.var('PRICE_COMMODITY', filters={'level': 'useful'})
+            self.s.var('PRICE_COMMODITY', filters={'level': self.levels})
         )
         for node, com in product(self.nodes, self.sectors):
             test_price = model_price.loc[(model_price['node'] == node) & (
@@ -339,7 +339,7 @@ class Calculate:
         # read from scenario
         idx = ['node', 'sector', 'year']
         model_demand = self._clean_model_data(
-            self.s.var('DEMAND', filters={'level': 'useful'})
+            self.s.var('DEMAND', filters={'level': self.levels})
         )
         model_demand.rename(columns={'lvl': 'value', 'commodity': 'sector'},
                             inplace=True)
@@ -402,10 +402,9 @@ def add_model_data(base, clone, data):
         clone.add_set("cat_node", ["economy", n])
 
     # add sectoral set structure
-    # TODO: we shouldn't have to have a for loop here
-    for s in c.sectors:
+    for s, l in product(c.sectors, c.levels):
         clone.add_set('sector', s)
-        clone.add_set("mapping_macro_sector", [s, s, "useful"])
+        clone.add_set("mapping_macro_sector", [s, s, l])
 
     # add parameters
     for name, info in MACRO_ITEMS.items():
