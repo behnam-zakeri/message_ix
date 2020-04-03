@@ -33,10 +33,10 @@ class MockScenario:
         df = self.data['aeei']
         # add extra commodity to be removed
         extra_commod = df[df.sector == 'i_therm']
-        extra_commod['sector'] = self.data['config']['ignore_sectors'][0]
+        extra_commod['sector'] = 'bar'
         # add extra region to be removed
         extra_region = df[df.node == 'R11_AFR']
-        extra_region['node'] = self.data['config']['ignore_nodes'][0]
+        extra_region['node'] = 'foo'
         df = pd.concat([df, extra_commod, extra_region])
 
         if name == 'DEMAND':
