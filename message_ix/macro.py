@@ -124,7 +124,7 @@ def _validate_data(name, df, nodes, sectors, levels, years):
         cols = MACRO_DATA_FOR_DERIVATION[name]
     else:
         cols = MACRO_ITEMS[name]['idx_sets']
-    col_diff = set(cols) - set(df.columns)
+    col_diff = set(cols + ['unit']) - set(df.columns)
     if col_diff:
         msg = 'Missing expected columns for {}: {}'
         raise ValueError(msg.format(name, col_diff))
