@@ -52,10 +52,11 @@ EMISSION_CONSTRAINT_RESCALE.l(node,type_emission,type_tec,type_year)$(
     PRICE_COMMODITY.l(node,commodity,level,year,time) =
         ( COMMODITY_BALANCE_GT.m(node,commodity,level,year,time) + COMMODITY_BALANCE_LT.m(node,commodity,level,year,time) )
             / df_period(year) ;
-    PRICE_EMISSION.l(node,type_emission,type_tec,year)$( SUM(type_year$( cat_year(type_year,year) ), 1 ) ) =
-        SMAX(type_year$( cat_year(type_year,year) ),
-               - EMISSION_CONSTRAINT_RESCALE.l(node,type_emission,type_tec,type_year) )
-            / df_period(year) * duration_period(year);
+    PRICE_EMISSION.l(node,type_emission,type_tec,year)$( SUM(emission$( cat_emission(type_emission,emission) ),
+         EMISSION_EQUIVALENCE.m(node,emission,type_tec,year) ) ) =
+        SMAX(emission$( cat_emission(type_emission,emission) ),
+               EMISSION_EQUIVALENCE.m(node,emission,type_tec,year) / emission_scaling(type_emission,emission) )
+            / df_period(year);
     PRICE_EMISSION.l(node,type_emission,type_tec,year)$(
         PRICE_EMISSION.l(node,type_emission,type_tec,year) = - inf ) = 0 ;
 
